@@ -1,6 +1,4 @@
 #pragma once
-#include "glfw3.h"
-
 #include "Headers.h"
 
 namespace VkInit {

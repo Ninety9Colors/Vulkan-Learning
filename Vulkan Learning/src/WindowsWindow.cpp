@@ -50,3 +50,31 @@ void WindowsWindow::create_glfw_window() {
     }
   }
 }
+
+void WindowsWindow::create_surface(const vk::Instance& instance, vk::SurfaceKHR& surface, const bool debug) {
+  if (debug) {
+    std::cout << std::endl << "Creating Window Surface..." << std::endl;
+  }
+
+  vk::Win32SurfaceCreateInfoKHR surface_info {
+    vk::Win32SurfaceCreateFlagsKHR{},
+    GetModuleHandle(nullptr),
+    glfwGetWin32Window(glfw_window_)
+  };
+
+  try {
+    surface = instance.createWin32SurfaceKHR(surface_info);
+    if (debug) {
+      std::cout << "Window Surface Created!" << std::endl;
+    }
+  }
+  catch (vk::SystemError e) {
+    if (debug) {
+      std::cout << "Window Surface Creation Failed!" << std::endl;
+    }
+  }
+}
+
+GLFWwindow* WindowsWindow::get_glfw_window() {
+  return glfw_window_;
+}

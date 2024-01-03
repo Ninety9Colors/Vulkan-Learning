@@ -8,14 +8,18 @@ Application::Application() {
   if (debug_) {
     create_debug_messenger();
   }
+  window_->create_surface(instance_, surface_, debug_);
   create_physical_device();
   create_logical_device();
+  create_swapchain();
 }
 
 Application::~Application() {
   instance_.destroyDebugUtilsMessengerEXT(debug_messenger_, nullptr, dispatch_loader_);
+  instance_.destroySurfaceKHR(surface_, nullptr);
+  device_.destroySwapchainKHR(swapchain_);
   device_.destroy();
-  vkDestroyInstance(instance_, nullptr);
+  instance_.destroy();
   delete window_;
 }
 
@@ -35,10 +39,20 @@ void Application::create_debug_messenger() {
 }
 
 void Application::create_physical_device() {
-  physical_device_ = VkInit::choose_physical_device(instance_, debug_);
+  physical_device_ = VkInit::choose_physical_device(instance_, surface_, debug_);
 }
 
 void Application::create_logical_device() {
-  device_ = VkInit::create_logical_device(physical_device_, debug_);
-  graphics_queue_ = VkInit::get_queue(physical_device_, device_, debug_);
+  device_ = VkInit::create_logical_device(physical_device_, surface_, debug_);
+  std::array<vk::Queue, 2> queues = VkInit::get_queue(physical_device_, device_, surface_, debug_);
+  graphics_queue_ = queues[0];
+  present_queue_ = queues[1];
+}
+
+void Application::create_swapchain() {
+  VkInit::SwapChainBundle bundle = VkInit::create_swapchain(physical_device_, device_, surface_, window_->get_glfw_window(), debug_);
+  swapchain_ = bundle.Swapchain;
+  swapchain_images_ = device_.getSwapchainImagesKHR(swapchain_);
+  swapchain_format_ = bundle.Format;
+  swapchain_extent_ = bundle.Extent;
 }

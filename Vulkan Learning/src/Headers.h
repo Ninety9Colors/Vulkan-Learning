@@ -1,5 +1,9 @@
 #pragma once
+#define GLFW_INCLUDE_VULKAN
+
+#include <algorithm>
 #include <iostream>
 #include <optional>
 
-#include "vulkan/vulkan.hpp"
+#include <glfw3.h>
+#include <vulkan/vulkan.hpp>
