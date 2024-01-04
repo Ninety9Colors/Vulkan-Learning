@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "Device.h"
 #include "Init.h"
+#include "Swapchain.h"
 
 Application::Application() {
   window_ = new WindowsWindow(debug_);
@@ -50,7 +51,7 @@ void Application::create_logical_device() {
 }
 
 void Application::create_swapchain() {
-  VkInit::SwapChainBundle bundle = VkInit::create_swapchain(physical_device_, device_, surface_, window_->get_glfw_window(), debug_);
+  VkUtils::SwapChainBundle bundle = VkInit::create_swapchain(physical_device_, device_, surface_, window_->get_glfw_window(), debug_);
   swapchain_ = bundle.Swapchain;
   swapchain_images_ = device_.getSwapchainImagesKHR(swapchain_);
   swapchain_format_ = bundle.Format;
